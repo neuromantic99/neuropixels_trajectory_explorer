@@ -1,2 +1,6 @@
 
+CCF/
 neuropixels_trajectory_explorer.asv
+.DS_Store
+*.asv
+probe_positions.mat
