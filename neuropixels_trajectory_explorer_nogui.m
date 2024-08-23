@@ -10,7 +10,11 @@
 % TO DO 2.0 update: 
 % - recording connection
 
-function [probe_area_labels, probe_area_boundaries] = neuropixels_trajectory_explorer_nogui
+% function  neuropixels_trajectory_explorer_nogui
+function  [probe_area_labels, probe_area_boundaries] = neuropixels_trajectory_explorer_nogui(AP, ML, AZ, elevation, path_to_npymatlab, path_to_CCF)
+
+addpath(genpath(path_to_npymatlab))
+addpath(genpath(path_to_CCF))
 
 %% Checks and initialize
 % Check MATLAB version
@@ -31,13 +35,8 @@ if ~license('test','Image_Toolbox')
     error('MATLAB image processing toolbox required (https://uk.mathworks.com/products/image.html)')
 end
 
-% Initialize gui_data structure
 gui_data = struct;
 
-%% Load atlas and associated data
-
-% Load in atlas
-% Find path with CCF
 if ~isdeployed
     % (if being run in matlab: find CCF in the matlab path)
     allen_atlas_path = fileparts(which('template_volume_10um.npy'));
@@ -178,69 +177,6 @@ axes_probe_areas.YAxisLocation = 'right';
 title(axes_probe_areas,'Probe areas');
 
 
-% %% Create menu/buttons
-% 
-% probe_controls_menu = uimenu(probe_atlas_gui,'Text','Probe controls');
-% uimenu(probe_controls_menu,'Text','Display controls','MenuSelectedFcn',{@popup_controls,probe_atlas_gui});
-% uimenu(probe_controls_menu,'Text','Add probe','MenuSelectedFcn',{@probe_add,probe_atlas_gui});
-% uimenu(probe_controls_menu,'Text','Remove selected probe','MenuSelectedFcn',{@probe_remove,probe_atlas_gui});
-% uimenu(probe_controls_menu,'Text','Set entry','MenuSelectedFcn',{@set_probe_entry,probe_atlas_gui});
-% uimenu(probe_controls_menu,'Text','Set endpoint','MenuSelectedFcn',{@set_probe_endpoint,probe_atlas_gui});
-% 
-% scaling_menu = uimenu(probe_atlas_gui,'Text','Brain scaling');
-% uimenu(scaling_menu,'Text','Set bregma-lambda distance','MenuSelectedFcn',{@set_bregma_lambda_distance,probe_atlas_gui});
-% 
-% mesh_areas_menu = uimenu(probe_atlas_gui,'Text','3D areas');
-% uimenu(mesh_areas_menu,'Text','List areas','MenuSelectedFcn',{@add_area_list,probe_atlas_gui});
-% uimenu(mesh_areas_menu,'Text','Search areas','MenuSelectedFcn',{@add_area_search,probe_atlas_gui});
-% uimenu(mesh_areas_menu,'Text','Hierarchy areas','MenuSelectedFcn',{@add_area_hierarchy,probe_atlas_gui});
-% uimenu(mesh_areas_menu,'Text','Remove areas','MenuSelectedFcn',{@remove_area,probe_atlas_gui});
-% 
-% display_menu = uimenu(probe_atlas_gui,'Text','Display');
-% name_menu = uimenu(display_menu,'Text','Trajectory areas');
-% uimenu(name_menu,'Text','Probe position','MenuSelectedFcn',{@set_areas_probe,probe_atlas_gui},'Checked','on')
-% uimenu(name_menu,'Text','Full trajectory','MenuSelectedFcn',{@set_areas_trajectory,probe_atlas_gui},'Checked','off')
-% name_menu = uimenu(display_menu,'Text','Region names');
-% uimenu(name_menu,'Text','Acronym','MenuSelectedFcn',{@set_name_acronym,probe_atlas_gui},'Checked','on')
-% uimenu(name_menu,'Text','Full','MenuSelectedFcn',{@set_name_full,probe_atlas_gui})
-% slice_menu = uimenu(display_menu,'Text','Slice');
-% uimenu(slice_menu,'Text','Anatomical','MenuSelectedFcn',{@visibility_tv_slice,probe_atlas_gui},'Checked','off')
-% uimenu(slice_menu,'Text','Annotated','MenuSelectedFcn',{@visibility_av_slice,probe_atlas_gui})
-% object_menu = uimenu(display_menu,'Text','Objects');
-% uimenu(object_menu,'Text','Brain outline','MenuSelectedFcn',{@visibility_brain_outline,probe_atlas_gui},'Checked','on');
-% uimenu(object_menu,'Text','Grid','MenuSelectedFcn',{@visibility_grid,probe_atlas_gui});
-% uimenu(object_menu,'Text','Probe','MenuSelectedFcn',{@visibility_probe,probe_atlas_gui},'Checked','on');
-% uimenu(object_menu,'Text','3D areas','MenuSelectedFcn',{@visibility_3d_areas,probe_atlas_gui},'Checked','on');
-% uimenu(object_menu,'Text','Dark mode','MenuSelectedFcn',{@visibility_darkmode,probe_atlas_gui});
-% 
-% connect_menu = uimenu(probe_atlas_gui,'Text','Connect');
-% manipulator_menu = uimenu(connect_menu,'Text','Manipulator');
-% uimenu(manipulator_menu,'Text','New Scale MPM','MenuSelectedFcn',{@connect_newscale,probe_atlas_gui});
-% uimenu(manipulator_menu,'Text','Scientifica Patchstar','MenuSelectedFcn',{@connect_scientifica,probe_atlas_gui});
-% record_menu = uimenu(connect_menu,'Text','Recording');
-% uimenu(record_menu,'Text','OpenEphys','MenuSelectedFcn',{@connect_openephys,probe_atlas_gui});
-% uimenu(record_menu,'Text','SpikeGLX','MenuSelectedFcn',{@connect_spikeglx,probe_atlas_gui});
-% uimenu(record_menu,'Text','Set recording slot','MenuSelectedFcn',{@set_probe_recording_slot,probe_atlas_gui});
-% 
-% saveload_menu = uimenu(probe_atlas_gui,'Text','Save/Load');
-% uimenu(saveload_menu,'Text','Save positions','MenuSelectedFcn',{@save_probe_positions,probe_atlas_gui});
-% uimenu(saveload_menu,'Text','Load positions','MenuSelectedFcn',{@load_probe_positions,probe_atlas_gui});
-
-
-%%% Buttons
-button_fontsize = 12;
-
-% View angle buttons
-% button_position = [0,0,0.1,0.05];
-% view_button_h(1) = uicontrol('Parent',probe_atlas_gui,'Style','pushbutton','FontSize',button_fontsize, ...
-%     'Units','normalized','Position',button_position,'String','Coronal','Callback',{@view_coronal,probe_atlas_gui});
-% view_button_h(end+1) = uicontrol('Parent',probe_atlas_gui,'Style','pushbutton','FontSize',button_fontsize, ...
-%     'Units','normalized','Position',button_position,'String','Sagittal','Callback',{@view_sagittal,probe_atlas_gui});
-% view_button_h(end+1) = uicontrol('Parent',probe_atlas_gui,'Style','pushbutton','FontSize',button_fontsize, ...
-%     'Units','normalized','Position',button_position,'String','Horizontal','Callback',{@view_horizontal,probe_atlas_gui});
-% align(view_button_h,'fixed',0.1,'middle');
-
-
 %% Store initial GUI data
 gui_data.tv = tv; % Intensity atlas
 gui_data.av = av; % Annotated atlas
@@ -271,20 +207,8 @@ h.ButtonDownFilter = @rotate_clickable; % enable click-to-select during rotation
 % Update the slice whenever a rotation is completed
 h.ActionPostCallback = @update_slice;
 
-% Set functions for key presses
-% hManager = uigetmodemanager(probe_atlas_gui);
-% [hManager.WindowListenerHandles.Enabled] = deal(false);
-% set(probe_atlas_gui,'KeyPressFcn',@key_press);
-% set(probe_atlas_gui,'KeyReleaseFcn',@key_release);
-
-% Upload gui_data
-% guidata(probe_atlas_gui, gui_data);
-
-% Draw brain outline
-% draw_brain(probe_atlas_gui);
-% HEREE
 gui_data = probe_add([],[],gui_data,'Neuropixels 1.0');
-gui_data = set_probe_entry(-1.5, 0.37, 146, 73, gui_data);
+gui_data = set_probe_entry(AP, ML, AZ, elevation, gui_data);
 probe_area_labels = gui_data.probe_area_labels;
 probe_area_boundaries = gui_data.probe_area_boundaries;
 end
@@ -537,24 +461,8 @@ end
 
 function gui_data = set_probe_entry(AP, ML, AZ, elevation, gui_data)
 
-% Get guidata
-% gui_data = guidata(probe_atlas_gui);
-% 
-% % Prompt for angles
-% prompt_text = { ...
-%     'AP position (mm from bregma)', ...
-%     'ML position (mm from bregma)', ...
-%     'Azimuth angle (relative to lambda -> bregma)', ....
-%     'Elevation angle (relative to horizontal)', ...
-%     'Rotation angle'};
-% 
-% new_probe_position_input = inputdlg(prompt_text,'Set probe position',1);
-% if any(cellfun(@isempty,new_probe_position_input))
-%     error('Not all coordinates entered');
-% end
-% new_probe_position = cellfun(@str2num,new_probe_position_input);
-new_probe_position = [AP, ML, AZ, elevation, 0]';
 
+new_probe_position = [AP, ML, AZ, elevation, 0]';
 
 % Convert degrees to radians
 probe_angle = new_probe_position(3:5);
@@ -598,9 +506,6 @@ probe_ref_bottom = probe_ref_top + [x,y,z];
 trajectory_vector = [probe_ref_top;probe_ref_bottom]';
 gui_data.probe.trajectory = struct('XData', trajectory_vector(1,:), 'YData', trajectory_vector(2,:), 'ZData', trajectory_vector(3,:));
 
-% gui_data.probe.trajectory.XData = trajectory_vector(1,:);
-% gui_data.probe.trajectory.YData = trajectory_vector(2,:);
-% gui_data.probe.trajectory.ZData = trajectory_vector(3,:);
 
 % Upload gui_data
 gui_data.probe.angle = probe_angle;
@@ -674,10 +579,6 @@ function gui_data = update_probe_position(gui_data)
 % Update the probe position position relative to trajectory vector angles,
 % stored rotation angle, and stored DV position
 
-% Get the trajectory angle
-% trajectory_vector = cell2mat( ...
-%     get(gui_data.probe.trajectory, ...
-%     {'XData','YData','ZData'})');
 
 trajectory_vector = [gui_data.probe.trajectory.XData; gui_data.probe.trajectory.YData; gui_data.probe.trajectory.ZData];
 
